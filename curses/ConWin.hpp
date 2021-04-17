@@ -47,7 +47,8 @@ enum Style {
   cFileName,
   cFileWin,
   cFileDiff,
-  cFileEdit
+  cFileEdit,
+  cFileSearch
 };
 
 class ConWindow
