@@ -145,9 +145,13 @@ we will be publishing patch batches regularly.
   if it differs, the project name, the repository URL and the `zypper ar`
   line in the fork's README change with it.
 - Build repositories enabled:
-  - `openSUSE_Tumbleweed` — x86_64, aarch64
-  - `16.0` (Leap 16) — x86_64, aarch64
+  - `openSUSE_Tumbleweed` — x86_64
+  - `16.0` (Leap 16) — x86_64
   - Slowroll: present but disabled initially.
+- aarch64 is dropped for now: Tumbleweed's aarch64 packages come from
+  `openSUSE:Factory:ARM`, not `openSUSE:Factory`, so it needs its own
+  repository entry (and its own download path) rather than another
+  `<arch>` on the same repository.
 - No other architectures while the upstream code has no 64-bit-clean
   claims beyond what we test.
 
@@ -167,6 +171,12 @@ we will be publishing patch batches regularly.
   service mangles it, fall back to generating `vbindiff-3.0.beta5.tar.gz`
   and naming `Source0` to match. Implementation detail, not a design
   change.
+- **Current state:** server-side service runs on OBS answer `200 OK` but
+  produce no files and no `_servicedata`, with no other mode
+  (`manual`, `disabled`) making a difference. Until that is understood,
+  the OBS package carries a tarball generated with `git archive` from the
+  pinned commit; `_service` stays in the fork so the approach can be
+  retried without redesign.
 
 ### Spec file
 
