@@ -40,11 +40,13 @@ jobs:
 
       - name: Build and lint the RPM
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          topdir=$PWD/rpmbuild
+          set -eux
+          topdir=/tmp/rpmbuild
           mkdir -p "$topdir/SOURCES" "$topdir/SPECS"
-          git archive --prefix=vbindiff-3.0~beta5/ \
-            -o "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" HEAD
+          tar --exclude-vcs --exclude=./rpmbuild \
+              --transform 's,^\.,vbindiff-3.0~beta5,' \
+              -czf "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" .
+          tar -tzf "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" | head -1
           cp packaging/opensuse/vbindiff.spec "$topdir/SPECS/"
           rpmbuild --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec"
           rpmlint "$topdir"/RPMS/*/*.rpm | tee rpmlint.log
