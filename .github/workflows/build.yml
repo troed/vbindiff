@@ -23,7 +23,7 @@ jobs:
       - name: Install build dependencies
         run: >-
           zypper -n install --no-recommends
-          gcc-c++ make autoconf automake ncurses-devel
+          gcc-c++ make autoconf automake ncurses-devel git
           perl-Template-Toolkit perl-TimeDate rpm-build rpmlint
 
       - name: Build from the git tree
