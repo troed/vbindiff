@@ -8,6 +8,19 @@ VBinDiff was inspired by the Compare Files function of the [ProSel utilities by 
 The single-file mode was inspired by the LIST utility of [4DOS and friends](http://jpsoft.com/take-command-windows-scripting.html).  While [less](http://www.greenwoodsoftware.com/less/) provides a good line-oriented display, it has no equivalent to LIST's hex display.  (True, you can pipe the file through [hexdump](http://linux.die.net/man/1/hexdump), but that's incredibly inefficient on multi-gigabyte files.)
 
 
+## This fork
+
+This is a fork of [madsen/vbindiff](https://github.com/madsen/vbindiff), which
+has had no upstream commits since 2017. It carries fixes needed to build and
+run on current openSUSE, plus fixes cherry-picked from other distributors.
+
+openSUSE (Tumbleweed and Leap 16) packages are built from this fork at
+<https://build.opensuse.org/project/show/home:troed:vbindiff>:
+
+    zypper ar -f https://download.opensuse.org/repositories/home:/troed:/vbindiff/openSUSE_Tumbleweed/ vbindiff
+    zypper in vbindiff
+
+
 Working with This Repository
 ----------------------------
 
