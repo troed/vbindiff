@@ -73,9 +73,11 @@ jobs:
         run: |
           set -x
           # Container images ship with rpm.install.excludedocs = yes
-          sed -i 's/^rpm\.install\.excludedocs.*/rpm.install.excludedocs = no/' /etc/zypp/zypp.conf
-          grep -q '^rpm\.install\.excludedocs' /etc/zypp/zypp.conf \
-            || echo 'rpm.install.excludedocs = no' >> /etc/zypp/zypp.conf
+          conf=/etc/zypp/zypp.conf
+          mkdir -p /etc/zypp
+          [ -f "$conf" ] && sed -i 's/^rpm\.install\.excludedocs.*/rpm.install.excludedocs = no/' "$conf"
+          grep -q '^rpm\.install\.excludedocs' "$conf" 2>/dev/null \
+            || echo 'rpm.install.excludedocs = no' >> "$conf"
           if ! zypper -n install --allow-unsigned-rpm /tmp/rpmbuild/RPMS/*/*.rpm \
                   > /tmp/install.log 2>&1; then
             tail -n 20 /tmp/install.log | while IFS= read -r line; do
