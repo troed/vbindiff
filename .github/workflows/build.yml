@@ -49,7 +49,8 @@ jobs:
           cp packaging/opensuse/vbindiff.spec "$topdir/SPECS/"
 
           rc=0
-          rpmbuild --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec" \
+          rpmbuild --define 'debug_package %{nil}' \
+              --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec" \
               > /tmp/rpmbuild.log 2>&1 || rc=$?
           if [ "$rc" -ne 0 ]; then
             tail -n 30 /tmp/rpmbuild.log | while IFS= read -r line; do
@@ -58,7 +59,8 @@ jobs:
             exit "$rc"
           fi
 
-          rpmlint "$topdir"/RPMS/*/*.rpm > /tmp/rpmlint.log 2>&1 || true
+          rpmlint -r packaging/opensuse/vbindiff-rpmlintrc \
+              "$topdir"/RPMS/*/*.rpm > /tmp/rpmlint.log 2>&1 || true
           if grep -q ': E: ' /tmp/rpmlint.log; then
             grep ': E: ' /tmp/rpmlint.log | while IFS= read -r line; do
               echo "::error::rpmlint: $line"

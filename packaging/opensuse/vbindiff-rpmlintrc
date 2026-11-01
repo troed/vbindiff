@@ -1,0 +1,6 @@
+# rpmlint filters for vbindiff
+#
+# The spell checker in Leap 16's rpmlint does not know the project name or
+# the packager's account name, and both appear in the description/changelog.
+addFilter(r"spelling-error \('openSUSE'")
+addFilter(r"spelling-error \('troed'")
