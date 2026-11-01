@@ -72,21 +72,19 @@ jobs:
       - name: Install the RPM and smoke-test the packaged files
         run: |
           set -x
-          # Container images ship with rpm.install.excludedocs = yes
-          conf=/etc/zypp/zypp.conf
-          mkdir -p /etc/zypp
-          [ -f "$conf" ] && sed -i 's/^rpm\.install\.excludedocs.*/rpm.install.excludedocs = no/' "$conf"
-          grep -q '^rpm\.install\.excludedocs' "$conf" 2>/dev/null \
-            || echo 'rpm.install.excludedocs = no' >> "$conf"
-          if ! zypper -n install --allow-unsigned-rpm /tmp/rpmbuild/RPMS/*/*.rpm \
-                  > /tmp/install.log 2>&1; then
+          rpmfile=$(ls /tmp/rpmbuild/RPMS/*/*.rpm)
+          if ! zypper -n install --allow-unsigned-rpm "$rpmfile" > /tmp/install.log 2>&1; then
             tail -n 20 /tmp/install.log | while IFS= read -r line; do
               echo "::error::zypper: $line"
             done
             exit 1
           fi
-          echo "::notice::files: $(rpm -ql vbindiff | tr '\n' ' ')"
-          echo "::notice::version: $(vbindiff --version | sed -n 2p)"
-          for p in /usr/share/man/man1/vbindiff.1.gz /usr/share/licenses/vbindiff/COPYING; do
-            [ -e "$p" ] || { echo "::error::missing $p"; exit 1; }
-          done
+          vbindiff --version | grep -q 'VBinDiff 3\.0_beta5'
+
+          # Container images install with documentation excluded, so check the
+          # packaged payload rather than the unpacked filesystem.
+          rpm -qlp "$rpmfile" | grep -qx '/usr/share/man/man1/vbindiff\.1\.gz'
+          rpm -qlp "$rpmfile" | grep -qx '/usr/share/licenses/vbindiff/COPYING'
+          rpm2cpio "$rpmfile" \
+            | cpio -i --to-stdout ./usr/share/man/man1/vbindiff.1.gz \
+            | gzip -dc | grep -q 'VBinDiff 3\.0_beta5'
