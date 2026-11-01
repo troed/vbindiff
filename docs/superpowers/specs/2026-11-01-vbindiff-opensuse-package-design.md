@@ -128,12 +128,22 @@ we will be publishing patch batches regularly.
 
 - Nothing is tagged. `version` is fixed at `3.0~beta5`; the commit history
   is the patch log.
+- History is **append-only**: `opensuse` is never rebased or force-pushed,
+  because OBS pins full commit SHAs and a rewrite would make already-built
+  revisions unfetchable. If upstream ever revives, `madsen/master` is
+  merged into `opensuse`; it is not rebased onto it.
+- The fork already exists (created 2026-11-01) and is byte-identical to
+  upstream master. The local clone's `origin` still points at
+  `madsen/vbindiff`; setup adds the fork as a remote (or repoints
+  `origin`) and pushes `master`, `pr-23` and `opensuse`.
 
 ### OBS project
 
 - Project `home:troed:vbindiff` (a subproject, so the repository URL reads
   `.../home:/troed:/vbindiff/<repo>/` and the package is not mixed with
-  unrelated home-project packages).
+  unrelated home-project packages). This assumes the OBS login is `troed`;
+  if it differs, the project name, the repository URL and the `zypper ar`
+  line in the fork's README change with it.
 - Build repositories enabled:
   - `openSUSE_Tumbleweed` — x86_64, aarch64
   - `16.0` (Leap 16) — x86_64, aarch64
@@ -180,6 +190,26 @@ Single binary package, no subpackages.
 The spec carries **no patches**: the `panel.h` fix and every later fix
 live in the fork.
 
+### Execution boundary
+
+This workstation's sandbox has **no network egress** (GitHub and OBS do not
+resolve) and neither `osc` nor `gh` is installed; `git`, `rpmbuild`, `gcc`,
+autotools and `pod2man` are available.
+
+So the build delivers, locally and verifiably:
+
+- the five commits on `opensuse`;
+- `vbindiff.spec` and `_service` as files;
+- a `rpmbuild` run against a tarball produced locally with `git archive`
+  (valid because `GetOpt/` is vendored), with the resulting RPM inspected
+  and smoke-tested;
+- a runbook for the parts that need a human: add the fork remote and push,
+  create `home:troed:vbindiff`, upload the spec and service, regenerate,
+  commit, watch builds, and run the `zypper ar` acceptance test.
+
+If egress or credentials are made available later, those runbook steps
+become executable tasks; the design does not depend on that.
+
 ### Verification
 
 Before announcing the repository:
@@ -217,6 +247,13 @@ Before announcing the repository:
 - Packaging files live in the OBS package only; the fork holds source
   and docs (including this design), not the spec.
 - GetOpt vendored rather than tracked as a submodule.
+- `opensuse` history is append-only (no rebase, no force-push) because OBS
+  pins SHAs; upstream, if it revives, is merged in.
+- The implementation stops at local `rpmbuild` + runbook, since this
+  sandbox has no network or `osc`; pushing and OBS work is the human's
+  step.
+- The OBS login is assumed to be `troed` (matching GitHub); confirm at
+  first login.
 
 ## Risks
 
