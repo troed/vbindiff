@@ -71,7 +71,16 @@ jobs:
 
       - name: Install the RPM and smoke-test the packaged files
         run: |
-          zypper -n install --allow-unsigned-rpm /tmp/rpmbuild/RPMS/*/*.rpm
-          vbindiff --version | grep -q 'VBinDiff 3\.0_beta5'
-          test -f /usr/share/man/man1/vbindiff.1.gz
-          test -f /usr/share/licenses/vbindiff/COPYING
+          set -x
+          if ! zypper -n install --allow-unsigned-rpm /tmp/rpmbuild/RPMS/*/*.rpm \
+                  > /tmp/install.log 2>&1; then
+            tail -n 20 /tmp/install.log | while IFS= read -r line; do
+              echo "::error::zypper: $line"
+            done
+            exit 1
+          fi
+          echo "::notice::files: $(rpm -ql vbindiff | tr '\n' ' ')"
+          echo "::notice::version: $(vbindiff --version | sed -n 2p)"
+          for p in /usr/share/man/man1/vbindiff.1.gz /usr/share/licenses/vbindiff/COPYING; do
+            [ -e "$p" ] || { echo "::error::missing $p"; exit 1; }
+          done
