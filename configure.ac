@@ -1,11 +1,11 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.64)
-AC_INIT([[Visual Binary Diff]], [[3.0_beta6]], [[vbindiff AT cjmweb.net]], [[vbindiff]], [[https://www.cjmweb.net/vbindiff/]])
+AC_PREREQ([2.73])
+AC_INIT([[Visual Binary Diff]],[[3.0_beta6]],[[vbindiff AT cjmweb.net]],[[vbindiff]],[[https://www.cjmweb.net/vbindiff/]])
 AM_INIT_AUTOMAKE([1.9 foreign])
 AC_CONFIG_SRCDIR([vbindiff.cpp])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_LANG([C++])
 AC_REVISION([m4_esyscmd([./tools/configure.commit])])
 
@@ -38,7 +38,15 @@ AC_SEARCH_LIBS([new_panel], [panel], ,
              [AC_MSG_ERROR([The panel library is required])])
 
 # Checks for header files.
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro 'STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  C89 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS([errno.h fcntl.h limits.h panel.h ncurses/panel.h stdlib.h string.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
