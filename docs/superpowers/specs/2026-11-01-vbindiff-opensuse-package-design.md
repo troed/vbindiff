@@ -212,6 +212,12 @@ become executable tasks; the design does not depend on that.
 
 ### Verification
 
+GitHub Actions runs on every push (`.github/workflows/build.yml`), in
+`opensuse/tumbleweed` and `opensuse/leap:16.0` containers: build the tree,
+check the version strings, build and lint the RPM from the spec, install it
+and check the packaged files. That is the per-commit gate; OBS builds the
+same spec for the published repositories.
+
 Before announcing the repository:
 
 1. OBS builds succeed for every enabled repository and architecture.
