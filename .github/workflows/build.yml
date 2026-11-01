@@ -40,6 +40,7 @@ jobs:
 
       - name: Build and lint the RPM
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           topdir=$PWD/rpmbuild
           mkdir -p "$topdir/SOURCES" "$topdir/SPECS"
           git archive --prefix=vbindiff-3.0~beta5/ \
