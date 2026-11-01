@@ -40,21 +40,36 @@ jobs:
 
       - name: Build and lint the RPM
         run: |
-          set -eux
+          set -x
           topdir=/tmp/rpmbuild
           mkdir -p "$topdir/SOURCES" "$topdir/SPECS"
           tar --exclude-vcs --exclude=./rpmbuild \
               --transform 's,^\.,vbindiff-3.0~beta5,' \
               -czf "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" .
-          tar -tzf "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" | head -1
           cp packaging/opensuse/vbindiff.spec "$topdir/SPECS/"
-          rpmbuild --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec"
-          rpmlint "$topdir"/RPMS/*/*.rpm | tee rpmlint.log
-          ! grep -q ': E: ' rpmlint.log
+
+          rc=0
+          rpmbuild --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec" \
+              > /tmp/rpmbuild.log 2>&1 || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            tail -n 30 /tmp/rpmbuild.log | while IFS= read -r line; do
+              echo "::error::rpmbuild: $line"
+            done
+            exit "$rc"
+          fi
+
+          rpmlint "$topdir"/RPMS/*/*.rpm > /tmp/rpmlint.log 2>&1 || true
+          if grep -q ': E: ' /tmp/rpmlint.log; then
+            grep ': E: ' /tmp/rpmlint.log | while IFS= read -r line; do
+              echo "::error::rpmlint: $line"
+            done
+            exit 1
+          fi
+          cat /tmp/rpmlint.log
 
       - name: Install the RPM and smoke-test the packaged files
         run: |
-          zypper -n install --allow-unsigned-rpm "$PWD"/rpmbuild/RPMS/*/*.rpm
+          zypper -n install --allow-unsigned-rpm /tmp/rpmbuild/RPMS/*/*.rpm
           vbindiff --version | grep -q 'VBinDiff 3\.0_beta5'
           test -f /usr/share/man/man1/vbindiff.1.gz
           test -f /usr/share/licenses/vbindiff/COPYING
