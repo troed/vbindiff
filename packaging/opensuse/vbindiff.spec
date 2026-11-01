@@ -39,6 +39,9 @@ autoreconf -fi
 %install
 %make_install
 
+%check
+./vbindiff -L > /dev/null
+
 %files
 %license COPYING
 %doc README.md AUTHORS

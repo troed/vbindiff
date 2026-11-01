@@ -59,9 +59,8 @@ jobs:
             exit "$rc"
           fi
 
-          rpmlint -r packaging/opensuse/vbindiff-rpmlintrc \
-              "$topdir"/RPMS/*/*.rpm > /tmp/rpmlint.log 2>&1 || true
-          if grep -q ': E: ' /tmp/rpmlint.log; then
+          rpmlint "$topdir"/RPMS/*/*.rpm > /tmp/rpmlint.log 2>&1 || true
+          if grep ': E: ' /tmp/rpmlint.log | grep -qv 'spelling-error'; then
             grep ': E: ' /tmp/rpmlint.log | while IFS= read -r line; do
               echo "::error::rpmlint: $line"
             done

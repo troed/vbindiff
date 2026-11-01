@@ -354,8 +354,7 @@ osc co home:troed:vbindiff && cd home:troed:vbindiff
 osc mkpac vbindiff && cd vbindiff
 cp ~/dev/vbindiff/packaging/opensuse/vbindiff.spec .
 cp ~/dev/vbindiff/packaging/opensuse/_service .
-cp ~/dev/vbindiff/packaging/opensuse/vbindiff-rpmlintrc .
-osc add vbindiff.spec _service vbindiff-rpmlintrc
+osc add vbindiff.spec _service
 ```
 
 - [ ] **Step 3: Push the fork, then re-pin the service to the pushed head**
