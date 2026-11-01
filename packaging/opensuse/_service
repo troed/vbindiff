@@ -1,12 +1,12 @@
 <services>
-  <service name="tar_scm" mode="manual">
+  <service name="tar_scm">
     <param name="scm">git</param>
     <param name="url">https://github.com/troed/vbindiff</param>
-    <param name="revision">4d1c444c90c0ab4f20232a471223b3f38bfcd968</param>
+    <param name="revision">e86b56d098326cd48a08ff0e1f2364d7e2cbc8f9</param>
     <param name="version">3.0~beta5</param>
     <param name="filename">vbindiff</param>
   </service>
-  <service name="recompress" mode="manual">
+  <service name="recompress">
     <param name="file">*.tar</param>
     <param name="compression">gz</param>
   </service>
