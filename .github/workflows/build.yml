@@ -81,6 +81,8 @@ jobs:
           fi
           echo "::notice::files: $(rpm -ql vbindiff | tr '\n' ' ')"
           echo "::notice::version: $(vbindiff --version | sed -n 2p)"
+          echo "::notice::man-dir: $(ls -la /usr/share/man/man1/ 2>&1 | tr '\n' ' ')"
+          echo "::notice::rpm-verify: $(rpm -V vbindiff 2>&1 | tr '\n' ' ')"
           for p in /usr/share/man/man1/vbindiff.1.gz /usr/share/licenses/vbindiff/COPYING; do
             [ -e "$p" ] || { echo "::error::missing $p"; exit 1; }
           done
