@@ -1,0 +1,57 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  distro:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - opensuse/tumbleweed:latest
+          - opensuse/leap:16.0
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: >-
+          zypper -n install --no-recommends
+          gcc-c++ make autoconf automake ncurses-devel
+          perl-Template-Toolkit perl-TimeDate rpm-build rpmlint
+
+      - name: Build from the git tree
+        run: |
+          autoreconf -fi
+          ./configure
+          make -j"$(nproc)"
+
+      - name: Check version strings and smoke-test the binary
+        run: |
+          ./vbindiff --version | grep -q 'VBinDiff 3\.0_beta5'
+          ./vbindiff -L > /dev/null
+          grep -q 'VBinDiff 3\.0_beta5' vbindiff.1
+
+      - name: Build and lint the RPM
+        run: |
+          topdir=$PWD/rpmbuild
+          mkdir -p "$topdir/SOURCES" "$topdir/SPECS"
+          git archive --prefix=vbindiff-3.0~beta5/ \
+            -o "$topdir/SOURCES/vbindiff-3.0~beta5.tar.gz" HEAD
+          cp packaging/opensuse/vbindiff.spec "$topdir/SPECS/"
+          rpmbuild --define "_topdir $topdir" -ba "$topdir/SPECS/vbindiff.spec"
+          rpmlint "$topdir"/RPMS/*/*.rpm | tee rpmlint.log
+          ! grep -q ': E: ' rpmlint.log
+
+      - name: Install the RPM and smoke-test the packaged files
+        run: |
+          zypper -n install --allow-unsigned-rpm "$PWD"/rpmbuild/RPMS/*/*.rpm
+          vbindiff --version | grep -q 'VBinDiff 3\.0_beta5'
+          test -f /usr/share/man/man1/vbindiff.1.gz
+          test -f /usr/share/licenses/vbindiff/COPYING
