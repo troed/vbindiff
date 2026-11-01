@@ -14,6 +14,8 @@ This is a fork of [madsen/vbindiff](https://github.com/madsen/vbindiff), which
 has had no upstream commits since 2017. It carries fixes needed to build and
 run on current openSUSE, plus fixes cherry-picked from other distributors.
 
+![build](https://github.com/troed/vbindiff/actions/workflows/build.yml/badge.svg?branch=opensuse)
+
 openSUSE (Tumbleweed and Leap 16) packages are built from this fork at
 <https://build.opensuse.org/project/show/home:troed:vbindiff>:
 
