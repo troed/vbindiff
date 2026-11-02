@@ -2,7 +2,7 @@
   <service name="tar_scm">
     <param name="scm">git</param>
     <param name="url">https://github.com/troed/vbindiff</param>
-    <param name="revision">e86b56d098326cd48a08ff0e1f2364d7e2cbc8f9</param>
+    <param name="revision">1869e516c0d4f4136deacef432d079c2b9d9e4ac</param>
     <param name="version">3.0~beta5</param>
     <param name="filename">vbindiff</param>
   </service>
