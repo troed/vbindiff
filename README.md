@@ -1,7 +1,7 @@
 VBinDiff - Visual Binary Diff
 =============================
 
-[Visual Binary Diff (VBinDiff)](https://www.cjmweb.net/vbindiff/) displays files in hexadecimal and ASCII (or EBCDIC).  It can also display two files at once, and highlight the differences between them.  Unlike diff, it works well with large files (up to 4 GB).
+[Visual Binary Diff (VBinDiff)](https://www.cjmweb.net/vbindiff/) displays files in hexadecimal and ASCII (or EBCDIC).  It can also display two files at once, and highlight the differences between them.  Unlike diff, it works well with large files (up to 64 GB).
 
 VBinDiff was inspired by the Compare Files function of the [ProSel utilities by Glen Bredon](http://www.apple2.org.za/gswv/USA2WUG/Glen.Bredon.In.Memoriam/A2.Software/), for the [Apple II](https://en.wikipedia.org/wiki/Apple_II).  When I couldn't find a similar utility for the PC, I wrote it myself.
 
@@ -11,8 +11,13 @@ The single-file mode was inspired by the LIST utility of [4DOS and friends](http
 ## This fork
 
 This is a fork of [madsen/vbindiff](https://github.com/madsen/vbindiff), which
-has had no upstream commits since 2017. It carries fixes needed to build and
-run on current openSUSE, plus fixes cherry-picked from other distributors.
+has had no upstream commits since 2017. It carries the fixes needed to build
+and run on current openSUSE, plus the nine patches Debian has shipped since
+2022 ([upstream PR #21](https://github.com/madsen/vbindiff/pull/21)): backward
+search, file positions up to 64 GB, page scrolling on Space and Backspace, and
+16/24/32-byte display lines. The openSUSE and Debian builds are therefore at
+feature parity, and Debian's patches are commits in this fork rather than a
+patch stack in the package.
 
 ![build](https://github.com/troed/vbindiff/actions/workflows/build.yml/badge.svg?branch=opensuse)
 
@@ -21,6 +26,10 @@ openSUSE (Tumbleweed and Leap 16) packages are built from this fork at
 
     zypper ar -f https://download.opensuse.org/repositories/home:/troed:/vbindiff/openSUSE_Tumbleweed/ vbindiff
     zypper in vbindiff
+
+The number of bytes per displayed line is fixed at compile time: define
+`WIDTH24` or `WIDTH32` (for example in `AM_CXXFLAGS`) to show 3 or 4 groups of
+8 bytes instead of the default 2.
 
 
 Working with This Repository
