@@ -21,11 +21,22 @@ patch stack in the package.
 
 ![build](https://github.com/troed/vbindiff/actions/workflows/build.yml/badge.svg?branch=opensuse)
 
-openSUSE (Tumbleweed and Leap 16) packages are built from this fork at
-<https://build.opensuse.org/project/show/home:troed:vbindiff>:
+openSUSE packages are built from this fork at
+<https://build.opensuse.org/project/show/home:troed:vbindiff>. Pick the
+repository that matches your release:
 
-    zypper ar -f https://download.opensuse.org/repositories/home:/troed:/vbindiff/openSUSE_Tumbleweed/ vbindiff
+| Release    | Repository |
+| ---------- | ---------- |
+| Tumbleweed | `https://download.opensuse.org/repositories/home:/troed:/vbindiff/openSUSE_Tumbleweed/` |
+| Leap 16.1  | `https://download.opensuse.org/repositories/home:/troed:/vbindiff/16.1/` |
+| Leap 16.0  | `https://download.opensuse.org/repositories/home:/troed:/vbindiff/16.0/` |
+
+    zypper ar -f <repository> vbindiff
     zypper in vbindiff
+
+When upgrading from Leap 16.0 to 16.1, point the repository at the `16.1` path
+(or remove and re-add it): `zypper` does not rewrite home-project repository
+URLs during a distribution upgrade.
 
 The number of bytes per displayed line is fixed at compile time: define
 `WIDTH24` or `WIDTH32` (for example in `AM_CXXFLAGS`) to show 3 or 4 groups of

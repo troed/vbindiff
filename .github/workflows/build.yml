@@ -15,6 +15,7 @@ jobs:
         image:
           - opensuse/tumbleweed:latest
           - opensuse/leap:16.0
+          - opensuse/leap:16.1
     container:
       image: ${{ matrix.image }}
     steps:
